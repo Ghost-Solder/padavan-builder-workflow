@@ -27,7 +27,7 @@ jobs:
       run: |
         fakeroot apt-get update
         fakeroot apt-get install -y make unar zip subversion gcc g++ gperf fakeroot
-        fakeroot apt-get install -y libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl
+        fakeroot apt-get install -y libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl libc6-dev
         fakeroot apt-get install -y autoconf automake autopoint bison build-essential flex git libtool pkg-config libgmp3-dev libmpc-dev libmpfr-dev texinfo
 
     - name: Download sources
