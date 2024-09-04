@@ -50,7 +50,7 @@ jobs:
         cp build.config padavan-ng/trunk/.config
         pushd padavan-ng/trunk
         ./clear_tree
-        ./build_firmware
+        fakeroot ./build_firmware
         popd
 
     - name: Run custom post-build script
