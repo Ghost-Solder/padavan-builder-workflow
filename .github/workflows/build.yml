@@ -39,11 +39,13 @@ jobs:
     - name: Build toolchain
       run: |
         cd /opt/rt-n56u/toolchain-mipsel
-        fakeroot ./clean_sources
+        sh dl_toolchain.sh
+        fakeroot ./clean_toolchain
         fakeroot ./build_toolchain
 
     - name: Build firmware
       run: |
+        cd /opt/rt-n56u/trunk
         fakeroot ./clear_tree
         fakeroot ./build_firmware MI-R3P
         popd
