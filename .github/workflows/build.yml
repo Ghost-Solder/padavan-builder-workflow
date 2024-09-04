@@ -14,53 +14,36 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Get variables
+    - name: Setup environment
       run: |
-        sed -i 's|\r$||g' variables build.config
-        . <(cat variables build.config)
-        PADAVAN_THEMES="${PADAVAN_THEMES[*]}"
-        for v in "${!PADAVAN_@}" "${!CONFIG_@}"; do
-          echo "$v=${!v}" >> $GITHUB_ENV
-        done
+        fakeroot apt-get update
+        fakeroot apt-get install -y make unar zip subversion gcc g++ gperf
+        fakeroot apt-get install -y libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl
+        fakeroot apt-get install -y autoconf automake autopoint bison build-essential flex git libtool pkg-config libgmp3-dev libmpc-dev libmpfr-dev texinfo python-docutils
 
-    - name: Download sources and toolchain
+    - name: Download sources
       run: |
         git config --global --add safe.directory '*'
-        git clone -b "$PADAVAN_BRANCH" "$PADAVAN_REPO"
-        git -C padavan-ng checkout "$PADAVAN_COMMIT"
-        wget -qO- "$PADAVAN_TOOLCHAIN_URL" | tar -C padavan-ng --zstd -xf -
+        cd /opt
+        git clone "$PADAVAN_REPO"
 
-    - name: Install themes
+    - name: Build toolchain
       run: |
-        if [[ -n $PADAVAN_THEMES ]]; then
-          git clone --depth 1 -b "$PADAVAN_THEMES_BRANCH" "$PADAVAN_THEMES_REPO" themes
-          cp -r themes/common-theme themes/jquery.js padavan-ng/trunk/user/www/n56u_ribbon_fixed
-
-          for theme in $PADAVAN_THEMES; do
-            echo "Installing $theme theme"
-            cp -r "themes/$theme-theme" padavan-ng/trunk/user/www/n56u_ribbon_fixed
-          done
-        fi
-
-    - name: Run custom pre-build script
-      run: '[[ -f pre-build.sh ]] && . pre-build.sh || :'
+        cd /opt/rt-n56u/toolchain-mipsel
+        fakeroot ./clean_sources
+        fakeroot ./build_toolchain
 
     - name: Build firmware
       run: |
-        cp build.config padavan-ng/trunk/.config
-        pushd padavan-ng/trunk
-        ./clear_tree
+        fakeroot ./clear_tree
         fakeroot ./build_firmware MI-R3P
         popd
 
-    - name: Run custom post-build script
-      run: '[[ -f post-build.sh ]] && . post-build.sh || :'
-
     - name: Prepare artifacts
       run: |
-        FW_FILE_NAME="$(find padavan-ng/trunk/images -type f -regextype posix-extended -iregex ".*\.(trx|bin)$" \
+        FW_FILE_NAME="$(find rt-n56u/trunk/images -type f -regextype posix-extended -iregex ".*\.(trx|bin)$" \
                         -printf "%T@\t%f\n" | sort -V | tail -1 | cut -f2)"
-        cp "padavan-ng/trunk/images/$FW_FILE_NAME" .
+        cp "rt-n56u/trunk/images/$FW_FILE_NAME" .
         echo "FW_FILE_NAME=$FW_FILE_NAME" >> $GITHUB_ENV
         echo "BUILD_TIMESTAMP=$(date '+%Y.%m.%d_%H.%M.%S')" >> $GITHUB_ENV
 
@@ -75,7 +58,7 @@ jobs:
 
     - name: Check firmware size
       run: |
-        partitions=padavan-ng/trunk/configs/boards/$CONFIG_VENDOR/$CONFIG_FIRMWARE_PRODUCT_ID/partitions.config
+        partitions=rt-n56u/trunk/configs/boards/$CONFIG_VENDOR/$CONFIG_FIRMWARE_PRODUCT_ID/partitions.config
         max_fw_size="$(awk '/Firmware/ { getline; getline; sub(",", ""); print strtonum($2); }' "$partitions")"
         fw_size="$(stat -c %s "$FW_FILE_NAME")"
 
