@@ -14,6 +14,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Get variables
+      run: |
+        sed -i 's|\r$||g' variables build.config
+        . <(cat variables build.config)
+        PADAVAN_THEMES="${PADAVAN_THEMES[*]}"
+        for v in "${!PADAVAN_@}" "${!CONFIG_@}"; do
+          echo "$v=${!v}" >> $GITHUB_ENV
+        done
+
     - name: Setup environment
       run: |
         fakeroot apt-get update
