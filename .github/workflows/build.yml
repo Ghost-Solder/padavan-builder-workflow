@@ -43,7 +43,8 @@ jobs:
 
     - name: Build firmware
       run: |
-        cd /opt/rt-n56u/trunk
+        cp build.config /opt/rt-n56u/trunk.config
+        pushd /opt/rt-n56u/trunk
         fakeroot ./clear_tree
         fakeroot ./build_firmware_modify MI-R3P
         popd
