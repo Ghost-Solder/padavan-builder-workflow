@@ -26,11 +26,10 @@ jobs:
     - name: Setup environment
       run: |
         apt-get update
-        apt-get install -y fakeroot sudo
-        fakeroot apt-get install -y make cmake unar zip unzip subversion gcc g++ gperf \ 
-          libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl libc6-dev \
-          autoconf automake autopoint bison build-essential flex git libtool pkg-config \
-          libgmp3-dev libmpc-dev libmpfr-dev texinfo curl nano xxd kmod cpio help2man libltdl-dev wget
+        apt-get install -y unzip libtool-bin curl cmake gperf gawk flex bison nano xxd \
+          fakeroot kmod cpio git python3-docutils gettext automake autopoint \
+          texinfo build-essential help2man pkg-config zlib1g-dev libgmp3-dev \
+	        libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget libc-dev-bin
 
     - name: Download sources
       run: |
