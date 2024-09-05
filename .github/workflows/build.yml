@@ -28,9 +28,9 @@ jobs:
         apt-get update
         apt-get install -y fakeroot sudo
         fakeroot apt-get install -y make cmake unar zip unzip subversion gcc g++ gperf \ 
-          libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl libc6-dev libtool-bin \
+          libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl libc6-dev \
           autoconf automake autopoint bison build-essential flex git libtool pkg-config \
-          libgmp3-dev libmpc-dev libmpfr-dev texinfo curl nano xxd kmod cpio help2man libltdl-dev wget libc-dev-bin
+          libgmp3-dev libmpc-dev libmpfr-dev texinfo curl nano xxd kmod cpio help2man libltdl-dev wget
 
     - name: Download sources
       run: |
