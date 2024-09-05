@@ -25,10 +25,12 @@ jobs:
 
     - name: Setup environment
       run: |
-        fakeroot apt-get update
-        fakeroot apt-get install -y make unar zip subversion gcc g++ gperf fakeroot
-        fakeroot apt-get install -y libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl libc6-dev
-        fakeroot apt-get install -y autoconf automake autopoint bison build-essential flex git libtool pkg-config libgmp3-dev libmpc-dev libmpfr-dev texinfo
+        apt-get update
+        apt-get install -y fakeroot sudo
+        fakeroot apt-get install -y make cmake unar zip unzip subversion gcc g++ gperf \ 
+          libncurses5-dev zlib1g-dev gawk gettext libssl-dev xsltproc libxml-parser-perl libc6-dev libtool-bin \
+          autoconf automake autopoint bison build-essential flex git libtool pkg-config \
+          libgmp3-dev libmpc-dev libmpfr-dev texinfo curl nano xxd kmod cpio help2man libltdl-dev wget libc-dev-bin
 
     - name: Download sources
       run: |
@@ -40,14 +42,12 @@ jobs:
       run: |
         cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
-        fakeroot ./clean_toolchain
-        fakeroot ./build_toolchain
 
     - name: Build firmware
       run: |
         cd /opt/rt-n56u/trunk
         fakeroot ./clear_tree
-        fakeroot ./build_firmware MI-R3P
+        fakeroot ./build_firmware_modify MI-R3P
         popd
 
     - name: Prepare artifacts
